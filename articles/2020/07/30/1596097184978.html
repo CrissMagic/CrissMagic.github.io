@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"39.101.199.168","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Vue 标签拖拽实现与部分踩坑记录前言自己作为后端工程师开发前端项目多有不易，幸好目前前端提供的框架还算多，抛开一些类似“圣诞事件”的不提，在使用 vue+elementui 做了几个项目后还是感觉不错，不过 vue 的重渲染有点麻烦，关于 elementui 的讨论也有很多，自己最近也试着接触了例如 vuetify、quasar、taro，感觉还是更偏向于移动端的 ui 开发，不过在下次项目选">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue标签拖拽实现与部分踩坑记录">
+<meta property="og:url" content="http://39.101.199.168/articles/2020/07/30/1596097184978.html">
+<meta property="og:site_name" content="一人行者">
+<meta property="og:description" content="Vue 标签拖拽实现与部分踩坑记录前言自己作为后端工程师开发前端项目多有不易，幸好目前前端提供的框架还算多，抛开一些类似“圣诞事件”的不提，在使用 vue+elementui 做了几个项目后还是感觉不错，不过 vue 的重渲染有点麻烦，关于 elementui 的讨论也有很多，自己最近也试着接触了例如 vuetify、quasar、taro，感觉还是更偏向于移动端的 ui 开发，不过在下次项目选">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.hacpai.com/bing/20191222.jpg?imageView2/1/w/960/h/540/interlace/1/q/100">
+<meta property="og:image" content="https://b3logfile.com/file/2020/07/%E6%A0%87%E7%AD%BE%E6%8B%96%E6%8B%BD%E4%BA%8B%E4%BE%8B-43e5ed8b.gif">
+<meta property="og:image" content="https://b3logfile.com/file/2020/07/echarts%E7%9A%84option%E5%90%88%E5%B9%B6-b30c98d3.gif">
+<meta property="og:image" content="https://b3logfile.com/file/2020/07/echarts%E7%9A%84option%E5%90%88%E5%B9%B62-1d378030.gif">
+<meta property="article:published_time" content="2020-07-30T08:19:45.000Z">
+<meta property="article:modified_time" content="2020-07-30T08:59:26.000Z">
+<meta property="article:author" content="CrissMagic">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="Vue">
+<meta property="article:tag" content="Element-UI">
+<meta property="article:tag" content="Echarts">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.hacpai.com/bing/20191222.jpg?imageView2/1/w/960/h/540/interlace/1/q/100">
+
+<link rel="canonical" href="http://39.101.199.168/articles/2020/07/30/1596097184978">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Vue标签拖拽实现与部分踩坑记录 | 一人行者</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一人行者</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">每一段旅行都有终点</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://39.101.199.168/articles/2020/07/30/1596097184978.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="CrissMagic">
+      <meta itemprop="description" content="CrissMagicBlog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一人行者">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Vue标签拖拽实现与部分踩坑记录
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-07-30 16:19:45 / 修改时间：16:59:26" itemprop="dateCreated datePublished" datetime="2020-07-30T16:19:45+08:00">2020-07-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://img.hacpai.com/bing/20191222.jpg?imageView2/1/w/960/h/540/interlace/1/q/100"></p>
+<h1 id="Vue-标签拖拽实现与部分踩坑记录"><a href="#Vue-标签拖拽实现与部分踩坑记录" class="headerlink" title="Vue 标签拖拽实现与部分踩坑记录"></a>Vue 标签拖拽实现与部分踩坑记录</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>自己作为后端工程师开发前端项目多有不易，幸好目前前端提供的框架还算多，抛开一些类似“圣诞事件”的不提，在使用 vue+elementui 做了几个项目后还是感觉不错，不过 vue 的重渲染有点麻烦，关于 elementui 的讨论也有很多，自己最近也试着接触了例如 vuetify、quasar、taro，感觉还是更偏向于移动端的 ui 开发，不过在下次项目选型的时候会更加注意，特别是政府项目。<br>七月底了，抽时间记录一下在最近在开发过程中一些坑还有实现标签拖拽的代码，供以后参考。</p>
+<h2 id="标签拖拽实现"><a href="#标签拖拽实现" class="headerlink" title="标签拖拽实现"></a>标签拖拽实现</h2><blockquote>
+<p>目的是用户可以自行从页面左侧选择需要的标签拖拽到右侧的方框里，使用 vue 绑定配置 echarts 的 option。</p>
+</blockquote>
+<p>效果如下图所示：<br><img src="https://b3logfile.com/file/2020/07/%E6%A0%87%E7%AD%BE%E6%8B%96%E6%8B%BD%E4%BA%8B%E4%BE%8B-43e5ed8b.gif" alt="标签拖拽事例.gif"></p>
+<p>本身想使用 vuedragable 插件的，但是发现或许不适合在多个容器间进行拖拽，所以此处采用 <a target="_blank" rel="noopener" href="https://github.com/bevacqua/dragula">dargula</a>，但由于该技术并未提供拖拽后的回调函数，所以采用手动添加监听事件的方式。</p>
+<p>具体功能逻辑如下：</p>
+<ol>
+<li>新增系列时向 v-for 绑定的数组中添加对象，对象中设置该系列对应的容器 id；</li>
+<li>在下个周期渲染完成后根据 class 类名获取 dom 元素并添加至 dragula 容器；</li>
+<li>同样手动给这些 dom 添加 <code>DOMNodeInserted</code> 事件和 <code>DOMNodeRemoved</code> 事件，并用参数传递标签 id 和容器 id；</li>
+<li>在监听事件触发后执行对应的逻辑方法。</li>
+</ol>
+<p>具体代码如下（已省略不重要的代码）：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">	...</span><br><span class="line">	<span class="function"><span class="title">created</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">	<span class="comment">// 初始化dragula</span></span><br><span class="line">	<span class="built_in">this</span>.drag = <span class="built_in">this</span>.$dragula(</span><br><span class="line">	&#123;</span><br><span class="line">  		isContainer: <span class="function"><span class="keyword">function</span> (<span class="params">el</span>) </span>&#123;</span><br><span class="line">		<span class="comment">// 设置带有tagData的class样式的dom加入容器</span></span><br><span class="line">	        <span class="keyword">return</span> el.classList.contains(<span class="string">&#x27;tag-data&#x27;</span>);</span><br><span class="line">        &#125;,</span><br><span class="line">        	moves: <span class="function"><span class="keyword">function</span> (<span class="params">el, source, handle, sibling</span>) </span>&#123;</span><br><span class="line">	        <span class="comment">// 哪些元素能拖动，true为都能拖动</span></span><br><span class="line">	        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;,</span><br><span class="line">        	accepts: <span class="function"><span class="keyword">function</span> (<span class="params">el, target, source, sibling</span>) </span>&#123;</span><br><span class="line">          	<span class="comment">// 放入容器的条件，true为都能放入</span></span><br><span class="line">          	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;,</span><br><span class="line">        	invalid: <span class="function"><span class="keyword">function</span> (<span class="params">el, handle</span>) </span>&#123;</span><br><span class="line">          	<span class="comment">// 默认情况下不会阻止任何拖动</span></span><br><span class="line">          	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="comment">// 拖动的元素是否为副本</span></span><br><span class="line">        copy: <span class="literal">false</span>,</span><br><span class="line">        <span class="comment">// 复制的源容器重新排序</span></span><br><span class="line">        copySortSource: <span class="literal">false</span>,</span><br><span class="line">        <span class="comment">// 是否将拖到容器外的元素放回原处</span></span><br><span class="line">        revertOnSpill: <span class="literal">true</span>,</span><br><span class="line">        <span class="comment">// 是否将拖到容器外的元素删除</span></span><br><span class="line">        removeOnSpill: <span class="literal">false</span>,</span><br><span class="line">        <span class="comment">// 设置获取附加镜像元素的元素</span></span><br><span class="line">        mirrorContainer: <span class="built_in">document</span>.body</span><br><span class="line">      &#125;)</span><br><span class="line">	&#125;,</span><br><span class="line">	methods:&#123;</span><br><span class="line">	...mapActions(</span><br><span class="line">        <span class="comment">// 映射actions中的方法</span></span><br><span class="line">        &#123;</span><br><span class="line">          addContainerTagArray: <span class="string">&#x27;addContainerTagArray&#x27;</span>,</span><br><span class="line">          removeContainerTagArray: <span class="string">&#x27;removeContainerTagArray&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">      ),</span><br><span class="line">	<span class="function"><span class="title">addAndBind</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="comment">// 先清空之前的数据</span></span><br><span class="line">        <span class="built_in">this</span>.seriesArray = []</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="built_in">this</span>.currentSeriesNum; i++) &#123;</span><br><span class="line">        <span class="comment">// 随机生成UUID</span></span><br><span class="line">          <span class="keyword">let</span> tempUUID = genUUID()</span><br><span class="line">          <span class="built_in">this</span>.seriesArray.push(</span><br><span class="line">            &#123;</span><br><span class="line">              containerId: tempUUID,</span><br><span class="line">              type: <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">              lineStyle: &#123;</span><br><span class="line">                color: <span class="string">&#x27;#409EFF&#x27;</span></span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          )</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">let</span> _this = <span class="built_in">this</span></span><br><span class="line">        <span class="comment">// 此处必须使用$nextTick否则vue还未渲染完时无法通过getElementsByClassName方法获取到dom对象</span></span><br><span class="line">        <span class="built_in">this</span>.$nextTick(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">          <span class="keyword">let</span> eles = <span class="built_in">document</span>.getElementsByClassName(<span class="string">&#x27;series-tag-container&#x27;</span>);</span><br><span class="line">          <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; _this.seriesArray.length; i++) &#123;</span><br><span class="line">            <span class="comment">// 数据添加完统一添加事件监听</span></span><br><span class="line">            <span class="keyword">let</span> series = _this.seriesArray[i]</span><br><span class="line">            <span class="comment">// dom渲染完成后执行</span></span><br><span class="line">            <span class="keyword">let</span> element = eles[i]</span><br><span class="line">            <span class="comment">// 添加拖拽容器</span></span><br><span class="line">            _this.drag.containers.push(element)</span><br><span class="line">            <span class="comment">// 设置自定义属性</span></span><br><span class="line">            element.setAttribute(<span class="string">&quot;containerId&quot;</span>, series.containerId)</span><br><span class="line">            <span class="comment">//  给新的系列标签容器添加监听器</span></span><br><span class="line">            element.addEventListener(<span class="string">&quot;DOMNodeInserted&quot;</span>, <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">              <span class="keyword">if</span> (element.children.length &gt; <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="comment">// 已经存在一个标签则退回</span></span><br><span class="line">                _this.drag.cancel()</span><br><span class="line">                _this.$message(&#123;</span><br><span class="line">                  message: <span class="string">&#x27;最多选择一个标签&#x27;</span>,</span><br><span class="line">                  type: <span class="string">&#x27;warning&#x27;</span></span><br><span class="line">                &#125;);</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">              &#125;</span><br><span class="line">              _this.addSeriesArray(e.target.getAttribute(<span class="string">&quot;id&quot;</span>),e.currentTarget.getAttribute(<span class="string">&quot;containerId&quot;</span>))</span><br><span class="line">            &#125;)</span><br><span class="line">            element.addEventListener(<span class="string">&quot;DOMNodeRemoved&quot;</span>, <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">              _this.removeSeriesArray(e.currentTarget.getAttribute(<span class="string">&quot;containerId&quot;</span>))</span><br><span class="line">            &#125;)</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="function"><span class="title">addSeriesArray</span>(<span class="params">tagId, containerId</span>)</span> &#123;</span><br><span class="line">        <span class="comment">// 从tagArray中根据id添加数据</span></span><br><span class="line">        <span class="keyword">let</span> tempTag = <span class="built_in">this</span>.tagArray.filter(<span class="function"><span class="params">tag</span> =&gt;</span> tag.id == tagId)</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="built_in">this</span>.seriesArray.length; i++) &#123;</span><br><span class="line">          <span class="keyword">let</span> series = <span class="built_in">this</span>.seriesArray[i]</span><br><span class="line">          <span class="keyword">if</span> (series.containerId == containerId) &#123;</span><br><span class="line">          <span class="comment">// 容器id相等则设置标签数据</span></span><br><span class="line">            series.id = tempTag[<span class="number">0</span>].id</span><br><span class="line">            series.name = tempTag[<span class="number">0</span>].fieldName</span><br><span class="line">            series.data = tempTag[<span class="number">0</span>].data</span><br><span class="line">            series.label = &#123;</span><br><span class="line">              show: <span class="literal">true</span>,</span><br><span class="line">              position: <span class="string">&#x27;top&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 将容器ID与标签ID添加到store，可以用vuex来管理标签id与容器id的关系，但是此处未用到</span></span><br><span class="line">        <span class="comment">// this.addContainerTagArray(&#123;</span></span><br><span class="line">        <span class="comment">//   containerId: containerId,</span></span><br><span class="line">        <span class="comment">//   tagId: tagId</span></span><br><span class="line">        <span class="comment">// &#125;)</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="function"><span class="title">removeSeriesArray</span>(<span class="params">containerId</span>)</span> &#123;</span><br><span class="line">      <span class="comment">// 标签移出时</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="built_in">this</span>.seriesArray.length; i++) &#123;</span><br><span class="line">          <span class="keyword">let</span> temp = <span class="built_in">this</span>.seriesArray[i]</span><br><span class="line">          <span class="keyword">if</span> (temp.containerId == containerId) &#123;</span><br><span class="line">            <span class="comment">// 匹配则初始化</span></span><br><span class="line">            temp.id = <span class="string">&#x27;&#x27;</span></span><br><span class="line">            temp.data = []</span><br><span class="line">            temp.name = <span class="string">&#x27;&#x27;</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 从store中移出</span></span><br><span class="line">        <span class="comment">// this.removeContainerTagArray(containerId)</span></span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>麻烦之处在于：</p>
+<ol>
+<li>Vue 的重渲染，如果动态添加系列数量，那么在系列数组发生变化后会导致整体的父组件重新渲染，导致拖拽来的标签消失（但实际数据还在），所以此处只能在一开始指定系列数量，并且如果要改变会提醒会丢失已有的配置；</li>
+<li>dragula 没有提供时间毁掉所以只能手动添加监听事件，需要注意的是由于添加进系列数组和绑定监听事件均是在同一方法内，此时 vue 还未对 dom 进行重渲染，所以此时是无法获取到 dom 对象的，需要使用 <code>$nextTick</code> 在渲染完成后才能获取，当然别忘记 <code>this</code> 要换成 <code>_this</code></li>
+</ol>
+<h2 id="一些坑"><a href="#一些坑" class="headerlink" title="一些坑"></a>一些坑</h2><h3 id="popover-弹框组件在循环中的使用"><a href="#popover-弹框组件在循环中的使用" class="headerlink" title="popover 弹框组件在循环中的使用"></a>popover 弹框组件在循环中的使用</h3><p>elementUI 官方提供的 popover 的事例只是在单一按钮的基础上绑定弹框，但是更多的情况是在表格或者 v-for 中使用，那么此时就不能按照官方的写法来。完整代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&lt;el-table</span><br><span class="line">              :data=&quot;chartArray&quot;</span><br><span class="line">              :highlight-current-row=&quot;true&quot;</span><br><span class="line">              @row-click=&quot;setOption&quot;</span><br><span class="line">              style=&quot;width: 100%&quot;&gt;</span><br><span class="line">              &lt;el-table-column</span><br><span class="line">                label=&quot;图表名&quot;</span><br><span class="line">                width=&quot;110&quot;&gt;</span><br><span class="line">                <span class="tag">&lt;<span class="name">template</span> <span class="attr">slot-scope</span>=<span class="string">&quot;scope&quot;</span>&gt;</span></span><br><span class="line">                  &#123;&#123;scope.row.name&#125;&#125;</span><br><span class="line">                <span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;/<span class="name">el-table-column</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">el-table-column</span> <span class="attr">label</span>=<span class="string">&quot;操作&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">template</span> <span class="attr">slot-scope</span>=<span class="string">&quot;scope&quot;</span>&gt;</span></span><br><span class="line">                  &lt;el-button</span><br><span class="line">                    size=&quot;mini&quot;</span><br><span class="line">                    type=&quot;primary&quot;</span><br><span class="line">                    @click=&quot;handleEdit(scope.$index, scope.row)&quot;&gt;编辑</span><br><span class="line">                  <span class="tag">&lt;/<span class="name">el-button</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;<span class="name">el-popover</span> <span class="attr">placement</span>=<span class="string">&quot;top&quot;</span> <span class="attr">width</span>=<span class="string">&quot;160&quot;</span> <span class="attr">:ref</span>=<span class="string">&quot;&#x27;popover-&#x27;+scope.$index&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">p</span>&gt;</span>确定删除吗？<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">&quot;text-align: right; margin: 0&quot;</span>&gt;</span></span><br><span class="line">                      &lt;el-button</span><br><span class="line">                        size=&quot;mini&quot;</span><br><span class="line">                        type=&quot;text&quot;</span><br><span class="line">                        @click=&quot;scope._self.$refs[&#x27;popover-&#x27;+scope.$index].doClose()&quot;&gt;</span><br><span class="line">                        取消</span><br><span class="line">                      <span class="tag">&lt;/<span class="name">el-button</span>&gt;</span></span><br><span class="line">                      &lt;el-button</span><br><span class="line">                        type=&quot;primary&quot;</span><br><span class="line">                        size=&quot;mini&quot;</span><br><span class="line">                        @click=&quot;scope._self.$refs[&#x27;popover-&#x27;+scope.$index].doClose();;handleDelete(scope.row)&quot;&gt;</span><br><span class="line">                        确定</span><br><span class="line">                      <span class="tag">&lt;/<span class="name">el-button</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">el-button</span> <span class="attr">type</span>=<span class="string">&quot;danger&quot;</span> <span class="attr">size</span>=<span class="string">&quot;mini&quot;</span> <span class="attr">slot</span>=<span class="string">&quot;reference&quot;</span>&gt;</span>删除<span class="tag">&lt;/<span class="name">el-button</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;/<span class="name">el-popover</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;/<span class="name">el-table-column</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">el-table</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>关键之处在于：</p>
+<ol>
+<li><code>&lt;el-popover&gt;</code> 组件上的 ref 属性在循环的过程中需要绑定不同的值，可以用循环的 index 或者使用循环对象的 id；</li>
+<li>在点击取消或者确定时使用 <code>scope._self.$refs[&#39;popover-&#39;+scope.$index].doClose()</code> 来关闭对应的 popover，后面再加上本身要执行的方法。</li>
+</ol>
+<h3 id="Echarts-的-option-合并"><a href="#Echarts-的-option-合并" class="headerlink" title="Echarts 的 option 合并"></a>Echarts 的 option 合并</h3><p>echarts 在默认情况下如果切换 option 会将之前的 option 与现在的 option 进行合并，因为一般情况下都是系列 <code>series</code> 发生变化，其他的如 xy 轴，图例之类的不会变，如果此时进行不同的 option 切换就会出现以下的结果：</p>
+<p><img src="https://b3logfile.com/file/2020/07/echarts%E7%9A%84option%E5%90%88%E5%B9%B6-b30c98d3.gif" alt="echarts 的 option 合并.gif"></p>
+<p>官方文档中是这么说的：<a target="_blank" rel="noopener" href="https://echarts.apache.org/zh/api.html#echartsInstance.setOption">option 合并</a><br>所以如果不想进行合并需要设置一下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">setOption</span>(<span class="params">row, column, event</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">this</span>.chart) &#123;</span><br><span class="line">          <span class="built_in">this</span>.chart = <span class="built_in">this</span>.$echarts.init(<span class="built_in">document</span>.getElementById(<span class="string">&#x27;chart-preview-container&#x27;</span>))</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">this</span>.chart.setOption(row.option, &#123;</span><br><span class="line">          <span class="comment">// option更新时不合并</span></span><br><span class="line">          notMerge: <span class="literal">true</span></span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;,</span><br></pre></td></tr></table></figure>
+
+<p>修改后就可以了：</p>
+<p><img src="https://b3logfile.com/file/2020/07/echarts%E7%9A%84option%E5%90%88%E5%B9%B62-1d378030.gif" alt="echarts 的 option 合并 2.gif"></p>
+<h3 id="滚动条隐藏"><a href="#滚动条隐藏" class="headerlink" title="滚动条隐藏"></a>滚动条隐藏</h3><p>自带的滚动条太丑了，所以我一般选择隐藏，记录一下对应的 CSS</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*右边卡片样式*/</span></span><br><span class="line"><span class="selector-class">.box-card-right</span> &#123;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">580px</span>;</span><br><span class="line">  <span class="attribute">overflow-y</span>: auto;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*设置隐藏滚动条*/</span></span><br><span class="line"><span class="selector-class">.box-card-right</span>::-webkit-scrollbar &#123;</span><br><span class="line">  display: none;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag"># 前端</a>
+              <a href="/tags/Vue/" rel="tag"># Vue</a>
+              <a href="/tags/Element-UI/" rel="tag"># Element-UI</a>
+              <a href="/tags/Echarts/" rel="tag"># Echarts</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/articles/2020/06/24/1592966579861.html" rel="prev" title="CentOS7 下 Docker 相关操作">
+      <i class="fa fa-chevron-left"></i> CentOS7 下 Docker 相关操作
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/articles/2020/10/15/1602757520896.html" rel="next" title="windows和Linux后台Jar包启动方式记录">
+      windows和Linux后台Jar包启动方式记录 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Vue-%E6%A0%87%E7%AD%BE%E6%8B%96%E6%8B%BD%E5%AE%9E%E7%8E%B0%E4%B8%8E%E9%83%A8%E5%88%86%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">Vue 标签拖拽实现与部分踩坑记录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E7%AD%BE%E6%8B%96%E6%8B%BD%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.</span> <span class="nav-text">标签拖拽实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E5%9D%91"><span class="nav-number">1.3.</span> <span class="nav-text">一些坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#popover-%E5%BC%B9%E6%A1%86%E7%BB%84%E4%BB%B6%E5%9C%A8%E5%BE%AA%E7%8E%AF%E4%B8%AD%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.3.1.</span> <span class="nav-text">popover 弹框组件在循环中的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Echarts-%E7%9A%84-option-%E5%90%88%E5%B9%B6"><span class="nav-number">1.3.2.</span> <span class="nav-text">Echarts 的 option 合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BB%9A%E5%8A%A8%E6%9D%A1%E9%9A%90%E8%97%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">滚动条隐藏</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">CrissMagic</p>
+  <div class="site-description" itemprop="description">CrissMagicBlog</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CrissMagic</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

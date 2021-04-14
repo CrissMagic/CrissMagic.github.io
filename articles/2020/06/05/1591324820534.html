@@ -20,17 +20,22 @@
     var CONFIG = {"hostname":"39.101.199.168","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="CrissMagicBlog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="一人行者">
-<meta property="og:url" content="http://39.101.199.168/archives/index.html">
+  <meta name="description" content="1、or 与 UNION习题来源：595.大的国家这道题较为简单，所以此处记录下OR 与 UNION的使用  使用or与UNION在结果上差别不大 UNION自带去重，若不想去重则使用UNION ALL where 子句中对非索引列使用 or 会引起全表扫描，故在数据量较大的时候查找效率较低，通常建议使用 UNION代替 or 同理对于索引列来最好使用 union all，因复杂的查询（包含运算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL相关学习与优化（持续更新）">
+<meta property="og:url" content="http://39.101.199.168/articles/2020/06/05/1591324820534.html">
 <meta property="og:site_name" content="一人行者">
-<meta property="og:description" content="CrissMagicBlog">
+<meta property="og:description" content="1、or 与 UNION习题来源：595.大的国家这道题较为简单，所以此处记录下OR 与 UNION的使用  使用or与UNION在结果上差别不大 UNION自带去重，若不想去重则使用UNION ALL where 子句中对非索引列使用 or 会引起全表扫描，故在数据量较大的时候查找效率较低，通常建议使用 UNION代替 or 同理对于索引列来最好使用 union all，因复杂的查询（包含运算">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.hacpai.com/bing/20191122.jpg?imageView2/1/w/960/h/540/interlace/1/q/100">
+<meta property="article:published_time" content="2020-06-05T02:40:20.000Z">
+<meta property="article:modified_time" content="2020-06-05T02:40:20.000Z">
 <meta property="article:author" content="CrissMagic">
+<meta property="article:tag" content="SQL">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.hacpai.com/bing/20191122.jpg?imageView2/1/w/960/h/540/interlace/1/q/100">
 
-<link rel="canonical" href="http://39.101.199.168/archives/">
+<link rel="canonical" href="http://39.101.199.168/articles/2020/06/05/1591324820534">
 
 
 <script id="page-configurations">
@@ -38,12 +43,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>归档 | 一人行者</title>
+  <title>SQL相关学习与优化（持续更新） | 一人行者</title>
   
 
 
@@ -142,237 +147,92 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 25 篇日志。 继续努力。</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://39.101.199.168/articles/2020/06/05/1591324820534.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="CrissMagic">
+      <meta itemprop="description" content="CrissMagicBlog">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一人行者">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SQL相关学习与优化（持续更新）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-05 10:40:20" itemprop="dateCreated datePublished" datetime="2020-06-05T10:40:20+08:00">2020-06-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2021</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-04-14T13:39:58+08:00"
-              content="2021-04-14">
-          04-14
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2021/04/14/hello-world/" itemprop="url">
-            <span itemprop="name">未命名</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-15T18:25:20+08:00"
-              content="2020-10-15">
-          10-15
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/articles/2020/10/15/1602757520896.html" itemprop="url">
-            <span itemprop="name">windows和Linux后台Jar包启动方式记录</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-07-30T16:19:45+08:00"
-              content="2020-07-30">
-          07-30
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/articles/2020/07/30/1596097184978.html" itemprop="url">
-            <span itemprop="name">Vue标签拖拽实现与部分踩坑记录</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-06-24T10:42:59+08:00"
-              content="2020-06-24">
-          06-24
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/articles/2020/06/24/1592966579861.html" itemprop="url">
-            <span itemprop="name">CentOS7 下 Docker 相关操作</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-06-16T18:25:53+08:00"
-              content="2020-06-16">
-          06-16
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/articles/2020/06/16/1592303153618.html" itemprop="url">
-            <span itemprop="name">ElementUI表格表头高度设置问题</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-06-12T16:17:25+08:00"
-              content="2020-06-12">
-          06-12
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/articles/2020/06/12/1591949845775.html" itemprop="url">
-            <span itemprop="name">iPad pro + 妙控键盘简单使用测评</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-06-05T10:40:20+08:00"
-              content="2020-06-05">
-          06-05
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/articles/2020/06/05/1591324820534.html" itemprop="url">
-            <span itemprop="name">SQL相关学习与优化（持续更新）</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-06-04T10:16:55+08:00"
-              content="2020-06-04">
-          06-04
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/articles/2020/06/04/1591237014985.html" itemprop="url">
-            <span itemprop="name">程序员专用知识类网站推荐（持续更新）</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-05-26T17:59:56+08:00"
-              content="2020-05-26">
-          05-26
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/articles/2020/05/26/1590487196412.html" itemprop="url">
-            <span itemprop="name">Centos7部署Sonarqube6.7.4</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-05-12T12:47:54+08:00"
-              content="2020-05-12">
-          05-12
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/articles/2020/05/12/1589258874768.html" itemprop="url">
-            <span itemprop="name">使用阿里云服务器跳转访问公司内网</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
+        <p><img src="https://img.hacpai.com/bing/20191122.jpg?imageView2/1/w/960/h/540/interlace/1/q/100"></p>
+<h2 id="1、or-与-UNION"><a href="#1、or-与-UNION" class="headerlink" title="1、or 与 UNION"></a>1、<code>or</code> 与 <code>UNION</code></h2><p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/big-countries/">习题来源：595.大的国家</a><br>这道题较为简单，所以此处记录下<code>OR</code> 与 <code>UNION</code>的使用</p>
+<ul>
+<li>使用<code>or</code>与<code>UNION</code>在结果上差别不大</li>
+<li><code>UNION</code>自带去重，若不想去重则使用<code>UNION ALL</code></li>
+<li><code>where</code> 子句中对非索引列使用 <code>or</code> 会引起全表扫描，故在数据量较大的时候查找效率较低，通常建议使用 <code>UNION</code>代替 <code>or</code></li>
+<li>同理对于索引列来最好使用 <code>union all</code>，因复杂的查询（包含运算等）将使 <code>or</code>、<code>in</code> 放弃索引而全表扫描，除非你能确定 <code>or</code>、<code>in</code> 会使用索引</li>
+<li>对于只有非索引字段,就老老实实用 <code>or</code> 或者 <code>in</code>，因为非索引字段本来要全表扫描而 <code>union all</code> 只会成倍增加表扫描的次数</li>
+<li>以上主要针对单表查询，对于多表联查来说，考虑的地方就多了，比如连接方式，查询表数据量分布、索引等，再结合单表的策略选择合适的关键字</li>
+</ul>
 
     </div>
-  </div>
-  
-  
-  
 
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SQL/" rel="tag"># SQL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/articles/2020/06/04/1591237014985.html" rel="prev" title="程序员专用知识类网站推荐（持续更新）">
+      <i class="fa fa-chevron-left"></i> 程序员专用知识类网站推荐（持续更新）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/articles/2020/06/12/1591949845775.html" rel="next" title="iPad pro + 妙控键盘简单使用测评">
+      iPad pro + 妙控键盘简单使用测评 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
   
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
+  
+  
 
 
 
@@ -424,6 +284,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81or-%E4%B8%8E-UNION"><span class="nav-number">1.</span> <span class="nav-text">1、or 与 UNION</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

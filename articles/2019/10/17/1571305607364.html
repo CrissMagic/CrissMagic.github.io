@@ -20,19 +20,23 @@
     var CONFIG = {"hostname":"39.101.199.168","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="欢迎来到CrissMagic的个人博客这里是CrissMagic，目前从事Java后台和大数据开发工作，喜爱IT技术，爱好ACGN文化、魔术、VOCALOID、Adobe全家桶等。网站名取材于ilem的歌曲《一人行者》，头像是世界第一的公主殿下，名字取材于美国著名魔术师CrissAngel，他也是我在魔术方面的偶像之一。 此网站使用Solo开源博客搭建，后期会在此基础上扩展为个人网站，主要用于分享">
+  <meta name="description" content="原文地址  此文章主要是搭建高可用的服务层来解决高并发的  关于拆分  每个业务一个独立的业务模块 业务之间完全解耦 业务之间互不影响 业务模块独立 单独开发、上线、运维 效率高   无状态设计  服务模块只处理对应的业务逻辑，无需关心业务请求的上下文信息，也就是说服务中不能保存用户的状态数据，如果有就会出现难以扩容、单点等问题 无状态后，若发生故障可以很容易用负载均衡的方式转移   超时设置">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一人行者">
-<meta property="og:url" content="http://39.101.199.168/2021/04/14/hello-world/index.html">
+<meta property="og:title" content="高并发下的部分架构解决思路">
+<meta property="og:url" content="http://39.101.199.168/articles/2019/10/17/1571305607364.html">
 <meta property="og:site_name" content="一人行者">
-<meta property="og:description" content="欢迎来到CrissMagic的个人博客这里是CrissMagic，目前从事Java后台和大数据开发工作，喜爱IT技术，爱好ACGN文化、魔术、VOCALOID、Adobe全家桶等。网站名取材于ilem的歌曲《一人行者》，头像是世界第一的公主殿下，名字取材于美国著名魔术师CrissAngel，他也是我在魔术方面的偶像之一。 此网站使用Solo开源博客搭建，后期会在此基础上扩展为个人网站，主要用于分享">
+<meta property="og:description" content="原文地址  此文章主要是搭建高可用的服务层来解决高并发的  关于拆分  每个业务一个独立的业务模块 业务之间完全解耦 业务之间互不影响 业务模块独立 单独开发、上线、运维 效率高   无状态设计  服务模块只处理对应的业务逻辑，无需关心业务请求的上下文信息，也就是说服务中不能保存用户的状态数据，如果有就会出现难以扩容、单点等问题 无状态后，若发生故障可以很容易用负载均衡的方式转移   超时设置">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-04-14T05:39:58.976Z">
-<meta property="article:modified_time" content="2021-04-14T07:49:43.280Z">
+<meta property="og:image" content="https://img.hacpai.com/bing/20171227.jpg?imageView2/1/w/960/h/540/interlace/1/q/100">
+<meta property="article:published_time" content="2019-10-17T09:46:47.000Z">
+<meta property="article:modified_time" content="2019-10-24T02:40:30.000Z">
 <meta property="article:author" content="CrissMagic">
+<meta property="article:tag" content="高并发">
+<meta property="article:tag" content="架构">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.hacpai.com/bing/20171227.jpg?imageView2/1/w/960/h/540/interlace/1/q/100">
 
-<link rel="canonical" href="http://39.101.199.168/2021/04/14/hello-world/">
+<link rel="canonical" href="http://39.101.199.168/articles/2019/10/17/1571305607364">
 
 
 <script id="page-configurations">
@@ -45,7 +49,7 @@
   };
 </script>
 
-  <title> | 一人行者</title>
+  <title>高并发下的部分架构解决思路 | 一人行者</title>
   
 
 
@@ -151,7 +155,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://39.101.199.168/2021/04/14/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://39.101.199.168/articles/2019/10/17/1571305607364.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -164,7 +168,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          高并发下的部分架构解决思路
         </h1>
 
         <div class="post-meta">
@@ -173,10 +177,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-04-14 13:39:58 / 修改时间：15:49:43" itemprop="dateCreated datePublished" datetime="2021-04-14T13:39:58+08:00">2021-04-14</time>
+              <time title="创建时间：2019-10-17 17:46:47" itemprop="dateCreated datePublished" datetime="2019-10-17T17:46:47+08:00">2019-10-17</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-10-24 10:40:30" itemprop="dateModified" datetime="2019-10-24T10:40:30+08:00">2019-10-24</time>
+              </span>
 
           
 
@@ -189,8 +199,91 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="欢迎来到CrissMagic的个人博客"><a href="#欢迎来到CrissMagic的个人博客" class="headerlink" title="欢迎来到CrissMagic的个人博客"></a>欢迎来到CrissMagic的个人博客</h1><p>这里是CrissMagic，目前从事Java后台和大数据开发工作，喜爱IT技术，爱好ACGN文化、魔术、VOCALOID、Adobe全家桶等。网站名取材于ilem的歌曲《一人行者》，头像是世界第一的公主殿下，名字取材于美国著名魔术师CrissAngel，他也是我在魔术方面的偶像之一。</p>
-<p>此网站使用Solo开源博客搭建，后期会在此基础上扩展为个人网站，主要用于分享我个人的技术博客、一些事物的评测以及生活方面的感想，欢迎各位评论吐槽。</p>
+        <p><img src="https://img.hacpai.com/bing/20171227.jpg?imageView2/1/w/960/h/540/interlace/1/q/100"></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/5vVXBXkd-Ilh7zk5G6Wxcg">原文地址</a></p>
+<ol>
+<li><p>此文章主要是搭建高可用的服务层来解决高并发的</p>
+</li>
+<li><p>关于拆分</p>
+<ul>
+<li>每个业务一个独立的业务模块</li>
+<li>业务之间完全解耦</li>
+<li>业务之间互不影响</li>
+<li>业务模块独立</li>
+<li>单独开发、上线、运维</li>
+<li>效率高</li>
+</ul>
+</li>
+<li><p>无状态设计</p>
+<ul>
+<li>服务模块只处理对应的业务逻辑，无需关心业务请求的上下文信息，也就是说服务中不能保存用户的状态数据，如果有就会出现难以扩容、单点等问题</li>
+<li>无状态后，若发生故障可以很容易用负载均衡的方式转移</li>
+</ul>
+</li>
+<li><p>超时设置</p>
+<ul>
+<li>服务调用分主调服务和被调服务，一旦主调服务A调用被调服务B超时则会进入超时流程</li>
+<li>超时可能是由于B服务宕机、网络问题或程序bug之类的</li>
+<li>设置3秒超时，则3秒后A不再关心B服务的回复情况，此时可以重新调用或者换一个对等的B服务，也可以直接放弃本次调用<blockquote>
+<p>超时设置的好处是当某个服务不可用时，不至于整个系统发生雪崩</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>异步调用<br> 如果业务允许延迟处理则可以采用异步调用<br> 实现异步调用一般采用消息队列，其主要功能有：</p>
+<ul>
+<li>异步处理—增加吞吐量</li>
+<li>削峰填谷—提高系统稳定性</li>
+<li>系统解耦—业务边界隔离</li>
+<li>数据同步—保证最终一致性</li>
+</ul>
+<p> 可以根据业务范围大小来确定使用什么队列</p>
+<ul>
+<li>应用内部—采用线程池，比如Java ThreadPool中的BlockingQueue实现任务级别的缓冲与处理</li>
+<li>应用外部—RabbitMQ、ActiveMQ，做应用级别队列，方便进行业务边界隔离与提高吞吐量<br>技术上讲，MQ分为两种模型：pull与push<ul>
+<li>pull：c主动请求mq，获取队列中的消息。可以控制消费速度，只需控制队列中的偏移量offset，一般用于c数量有限且推送消息的p不均匀的情况下</li>
+<li>push：mq主动推送消息到c。比较适合实时性要求较高的情况，但此时如果c消费不过来（或发生异常）则会导致消息再次入列，从而发生消费堵塞<blockquote>
+<p>目前较成熟的技术主要还是以pull模式为主，如kafka</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>幂等设计<br> 即一次请求和多个请求的作用是一样的</p>
+<p> 主要解决分布式的情况下，状态不明确（即超时的情况）重新请求可能导致的数据不一致、数据覆盖的问题</p>
+<p> 比如重试如果是get操作则无影响，但如果是post、put操作则会导致上述问</p>
+</li>
+</ol>
+<blockquote>
+<p>在金融、电商、银行等对数据要求较高的行业中必须使用幂等设计</p>
+</blockquote>
+<p>以支付为例：</p>
+<ul>
+<li><p>请求方一般会生产一个唯一性 ID 标识，这个标识可以具有业务一样，比如订单号或者支付流水号，在发起请求时候带上唯一性 ID。</p>
+</li>
+<li><p>接收者在收到请求后，第一步通过获取唯一性 ID 来查询接收端是否有对应的记录，如果有的话，就直接将上次请求的结果返回，如果没有的话，就进行操作，并在操作完成后记录到对应的表里</p>
+</li>
+<li><p>这样的话无论重新请求多少次，只要第一次支付成功，则会直接将记录的结果返回而不再次执行操作</p>
+</li>
+</ul>
+<ol start="7">
+<li>服务降级<br>牺牲非核心业务，保证核心业务的高可用。主要解决资源不足和访问量过大的问题，如双十一，主要采用部分服务不提供访问，来减少对系统的影响<br> 方式主要包括：<ul>
+<li>延迟服务，主要通过队列实现记录流水账单</li>
+<li>功能降级，停用不重要的功能，比如推荐、评论等，等高峰过去再恢复功能</li>
+<li>降低数据一致性，比如可以在页面不显示库存真实数据，只显示有没有库存两种状态</li>
+</ul>
+</li>
+</ol>
+<p>下面是需要注意的点：</p>
+<ul>
+<li><p>清晰定义降级级别， 比如出现吞吐量超过 X，单位时间内响应时间超过 Y 秒、失败次数超过 Z 次等，这些阈值需要在准备的时候，通过压测的方式来确定。</p>
+</li>
+<li><p>梳理业务级别：降级之前，首先需要确定哪些业务是必须有，哪些业务是可以有的，哪些业务是可有可无的。</p>
+</li>
+<li><p>降级开关：可以通过接入配置中心（比如携程 Apollo、百度 Disconf ）的方式直接后台降级。但是如果公司没有配置中心的话，可以封装一个 API 接口来切分，不过该 API 接口要做成幂等的方式，同时需要做一些简单的签名，来保证其一定的安全性</p>
+</li>
+</ul>
 
     </div>
 
@@ -199,6 +292,10 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%AB%98%E5%B9%B6%E5%8F%91/" rel="tag"># 高并发</a>
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
 
         
 
@@ -206,10 +303,13 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/articles/2020/10/15/1602757520896.html" rel="prev" title="windows和Linux后台Jar包启动方式记录">
-      <i class="fa fa-chevron-left"></i> windows和Linux后台Jar包启动方式记录
+    <a href="/articles/2019/10/11/1570759641494.html" rel="prev" title="Linux常用操作整理">
+      <i class="fa fa-chevron-left"></i> Linux常用操作整理
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/articles/2019/10/21/1571628649893.html" rel="next" title="Application.properties全配置（上）">
+      Application.properties全配置（上） <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -268,7 +368,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AC%A2%E8%BF%8E%E6%9D%A5%E5%88%B0CrissMagic%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2"><span class="nav-number">1.</span> <span class="nav-text">欢迎来到CrissMagic的个人博客</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
